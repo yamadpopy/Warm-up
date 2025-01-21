@@ -1,0 +1,45 @@
+# 初回のみ　uv インストール
+    （windows）
+        (cmd)
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        # 環境変数Pathを通す(ユーザー環境変数)
+
+# プロジェクトごとに仮想環境を作成
+    # cd でプロジェクトフォルダ(project)に移動し、プロジェクト名を指定し、仮想環境作成
+    uv init {プロジェクト名}
+
+    # cd で作成したプロジェクト名フォルダに移動し、venv作成
+    cd {プロジェクト名}
+    uv sync
+
+    # .gitignoreにgit監視外ファイル、フォルダーを記入
+
+    # 仮想環境をアクティベート
+    .\.venv\Scripts\activate.ps1
+
+# パッケージのインストール
+uv add {パッケージ名} --link-mode=copy
+uv add pywin32
+uv add pyautogui --link-mode=copy
+uv add pygetwindow --link-mode=copy
+
+uv add pyserial --link-mode=copy
+
+# パッケージの削除
+uv remove [パッケージ名]
+uv remove pypiwin32
+
+requirements.txtを使う
+*既に requirements.txt があり、それを読み込む場合は以下を使います。
+uv add -r requirements.txt
+
+*逆に requirements.txt として配布する必要がある場合は、以下を使います。
+uv pip freeze > requirements.txt
+
+*uv自身のアップデート
+uv self update
+uv --version
+
+*補足：パッケージツリーの表示
+uv tree
+
