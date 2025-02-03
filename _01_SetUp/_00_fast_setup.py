@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-
 from _01_SetUp._01_path_create import path_create
-from _02_dic._00_settins_data import project_data
 from _05_File._01_data_read import yaml_read
 from _05_File._02_data_save import yaml_save
 from _01_SetUp._02_ADC_setup import adc_setup
 
 def fast_setup(self):
-    # 設定情報読込
-    self.dic = project_data()
     # NASの「設定.yaml」ファイル確認
     nas_setting_file_check(self,'設定.yaml')
     # path設定
@@ -32,14 +28,30 @@ def nas_setting_file_check(self,file_name):
         if nas_dic != self.dic['データ構成']:
             # NASにある設定ファイルと異なる時は保存
             yaml_save(nas_file_path, self.dic['データ構成'])
+            self.logger.info(f"NASにある設定ファイルと異なる")
+        else:
+            self.logger.info(f"NASにある設定ファイルと同じ")
     else:
-        yaml_save(nas_file_path, self.dic['データ構成'])
+        try:
+            self.logger.info(f"NASに設定ファイルがないので保存")
+            yaml_save(nas_file_path, self.dic['データ構成'])
+        except:
+            self.logger.error(f"NASに設定ファイルを保存できなかった")
 
 def create_empty_folder(self):
+    skip_list = [
+        "ADC_exeパス",
+        "ADC_iniパス",
+        "ADC_portファイルパス",
+        "machine_id",
+        "device_type",
+        ]
     for d0 in self.dic['データ構成'].values():
         for d1 in d0['デバイス'].values():
             for device_id in d1.keys():
                 for k,v in self.now_dic[device_id].items():
-                    if "要約統計量" not in k:
-                        os.makedirs(v,exist_ok=True)
-
+                    if k not in skip_list:
+                        try:
+                            os.makedirs(v,exist_ok=True)
+                        except:
+                            self.logger.error(f"フォルダ作成できなかった。　{v}")

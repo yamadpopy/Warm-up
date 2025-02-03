@@ -58,11 +58,7 @@ class DailyDirectoryRotatingFileHandler(TimedRotatingFileHandler):
 ###############################################################################
 # ロガー設定関数
 ###############################################################################
-def setup_daily_logger(
-    base_dir: str,
-    logger_name: str = "",
-    log_level=logging.INFO
-) -> logging.Logger:
+def setup_daily_logger(self):
     """
     フォルダ設定.yamlから「大元ログフォルダ」を読み込み、さらにサブフォルダ名をPythonコード側で指定し、
     指定されたフォルダに対して日次ローテーションログ設定を行う。
@@ -73,9 +69,6 @@ def setup_daily_logger(
     sub_folder_name : str
         大元ログフォルダの下に作りたいサブフォルダ名
         例: "python1", "加工予定表_ダンプ" など
-
-    logger_name : str
-        ロガー名 (空文字ならルートロガー)
 
     log_level : int
         ログレベル (logging.INFO, logging.DEBUG など)
@@ -88,33 +81,36 @@ def setup_daily_logger(
 
     # サブフォルダを組み合わせて、出力先となるフォルダを作成
     # 例: C:\Business_type\製造レシピ\ver1.0\log\python1
+    base_dir = os.path.join(
+        self.dic['NASベースパス'],
+        self.dic['プロジェクト名'],
+        '現地_log'
+        )
     os.makedirs(base_dir, exist_ok=True)
 
     # ロガー取得
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(log_level)
+    self.logger = logging.getLogger("")
+    self.logger.setLevel(logging.INFO)
 
     # 既存のハンドラをクリア（重複追加防止）
-    logger.handlers = []
+    self.logger.handlers = []
 
     # Console出力
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(log_level)
+    console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(logging.Formatter(
         fmt="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
     ))
-    logger.addHandler(console_handler)
+    self.logger.addHandler(console_handler)
 
     # 日次ローテーションファイル出力 (yyyy-mm-dd.log)
     rotation_handler = DailyDirectoryRotatingFileHandler(base_dir=base_dir)
-    rotation_handler.setLevel(log_level)
+    rotation_handler.setLevel(logging.INFO)
     rotation_handler.setFormatter(logging.Formatter(
         fmt="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
     ))
-    logger.addHandler(rotation_handler)
+    self.logger.addHandler(rotation_handler)
 
-    logger.info(f"ログ設定完了: base_dir={base_dir}")
-    return logger
-
+    self.logger.info(f"ログ設定完了: base_dir={base_dir}")

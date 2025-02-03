@@ -20,30 +20,36 @@ from _09_ADC._03_adc_start import adc_start_check
 from _09_ADC._05_kill_process import kill_process
 from _01_SetUp._00_fast_setup import fast_setup
 from _01_SetUp._03_common_logger import setup_daily_logger
+from _02_dic._00_settins_data import project_data
+from _09_ADC._02_USB_dongle_check import dongle_check
 
 class Main():
     def __init__(self, **kwargs):
         super(Main,self).__init__(**kwargs)
+        # 設定情報読込
+        self.dic = project_data()
+        # log 設定
+        setup_daily_logger(self)
         # 起動中のADCすべて終了
-        kill_process("AdvancedControl.exe")
+        kill_process(self,"AdvancedControl.exe")
         # 初期設定
         fast_setup(self)
         pp(self.now_dic)
 
-        base_dir = os.path.join(
-            self.dic['NASベースパス'],
-            self.dic['プロジェクト名'],
-            '現地_log'
-            )
-        logger = setup_daily_logger(base_dir)
+        # USBドングルを認識しているか
+        self.dongle_signal = dongle_check(self)
+        if self.dongle_signal:
+            # 順次ADC起動
+            adc_start_check(self)
+        else:
+            self.logger.error(f"ADC　USBドングル　認識なし")
 
         self.stop_event = threading.Event()  # 終了イベント
         # 時刻チェック
         print('時刻チェック')
         threading.Thread(target=self.check_time).start()
 
-        # 順次ADC起動
-        adc_start_check(self)
+
 
         # CNC通信確認
         #if len(self.ip_connect) > 0:

@@ -2,8 +2,12 @@
 
 def project_data():
     dic = {
-        "プロジェクト名":"シマノライン3",
+        "プロジェクト名":"シマノライン4",
         "NASベースパス":r"\\192.168.10.74\b-lex-data-folder\100_Project\Warm-Up\山本精密",
+        "USBドングル":{
+            "VENDOR_ID":0x096E,
+            "PRODUCT_ID":0x0006,
+            },
         "データ構成":{
             "JPN111107":{
                 "機械名呼称":"ID241_M140X2_ブラザー",

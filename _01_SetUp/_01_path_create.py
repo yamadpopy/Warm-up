@@ -33,7 +33,7 @@ def path_create(self):
                         r"..\\",
                         self.dic['プロジェクト名'],
                         machine_id,device_type,device_id,
-                        "result"
+                        "result","data"
                         )),
                     'ローカル_要約統計量':os.path.abspath(os.path.join(
                         r"..\\",
