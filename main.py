@@ -19,6 +19,7 @@ from _09_ADC._03_adc_start import adc_start_check
 #from _05_File._03_adc_row_data import row_data_check
 from _09_ADC._05_kill_process import kill_process
 from _01_SetUp._00_fast_setup import fast_setup
+from _01_SetUp._03_common_logger import setup_daily_logger
 
 class Main():
     def __init__(self, **kwargs):
@@ -28,6 +29,13 @@ class Main():
         # 初期設定
         fast_setup(self)
         pp(self.now_dic)
+
+        base_dir = os.path.join(
+            self.dic['NASベースパス'],
+            self.dic['プロジェクト名'],
+            '現地_log'
+            )
+        logger = setup_daily_logger(base_dir)
 
         self.stop_event = threading.Event()  # 終了イベント
         # 時刻チェック
