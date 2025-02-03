@@ -31,22 +31,29 @@ def row_folder_check(row_folder_path,result_folder_path):
         # 有効なデータか判断
         if data_judge(df):
             # 有効データではないので削除
-            os.remove(row_f_path)
-            continue
+            try:
+                os.remove(row_f_path)
+            except:
+                continue
         # ファイル名からyyyy-mm取得
         year_month,date_time_obj = get_day(row_f)
         # ローカルのresultフォルダへgz拡張子で保存
         save_folder = os.path.join(result_folder_path,'data',year_month)
         os.makedirs(save_folder,exist_ok=True)
-        save_file_name = f"{row_f[:-3]}gz"
+        #save_file_name = f"{row_f[:-3]}gz"
+        save_file_name = f"{row_f[:-3]}csv"
         df.to_csv(
             os.path.join(save_folder,save_file_name),
-            index=False, compression='gzip'
+            index=False,
+            #compression='gzip'
             )
         # 統計量保存
         describe_check(result_folder_path,df,date_time_obj,year_month,save_file_name)
         # 処理を終えたので、生データは削除
-        os.remove(row_f_path)
+        try:
+            os.remove(row_f_path)
+        except:
+            continue
 
 def describe_check(result_folder_path,df_row,date_time_obj,year_month,save_file_name):
     df_des = df_row.describe()

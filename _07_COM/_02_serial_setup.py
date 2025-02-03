@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import serial
+
 
 def clean_text(data: bytes) -> str:
     """
@@ -12,23 +14,30 @@ def clean_text(data: bytes) -> str:
     text = text.replace(' ', '').replace('%', '')
     return text
 
-def serial_setup():
+def serial_setup(com):
     try:
         ser = serial.Serial(
-            port="COM10",
+            port=f"COM{com}",
             baudrate=19200,
             bytesize=8,
             parity='E',
             stopbits=2,
             rtscts=True
         )
-        while True:
-            row = ser.readline()
-            txt = clean_text(row)
-            print(txt)
     except Exception as e:
         # 切断状態
         print("An error occurred:", e)
+        return None
+    return ser
+
+def serial_monitoring(ser):
+    while True:
+        row = ser.readline()
+        txt = clean_text(row)
+        print(txt)
+
+
+
 
 if __name__ == "__main__":
     serial_setup()

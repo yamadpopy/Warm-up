@@ -2,20 +2,12 @@
 import subprocess
 
 def kill_process(process_name: str):
-    # tasklistコマンドで AdvancedControl.exe が実行中かをチェック
-    tasklist_cmd = ["tasklist", "/FI", f"IMAGENAME eq {process_name}"]
-    result = subprocess.run(tasklist_cmd, capture_output=True, text=True)
-
-    # 実行結果をもとに、AdvancedControl.exe が実行中かを判定
-    # 「INFO: No tasks are running...」などの文言がなければ起動している
-    if "No tasks are running" not in result.stdout:
-        print(f"{process_name} が起動しているため、強制終了します。")
-        taskkill_cmd = ["taskkill", "/F", "/IM", f"{process_name}"]
-        try:
-            subprocess.run(taskkill_cmd, check=True)
-            print(f"{process_name} を強制終了しました。")
-        except subprocess.CalledProcessError as e:
-            print("強制終了に失敗しました。:", e)
+    # /f: 強制終了
+    # /im: イメージ名による指定
+    # エラー出力に "エラー" が含まれた場合にプロセスが存在していないとみなす例
+    taskkill_cmd = ["taskkill", "/f", "/im", process_name]
+    result = subprocess.run(taskkill_cmd, capture_output=True, text=True)
+    if "エラー" in result.stderr:
+        print(f"{process_name} は起動していません。")
     else:
-        # 実行中のプロセスが見つからない場合
-        print(f"{process_name} は起動していません。強制終了を行いません。")
+        print(f"{process_name} を強制終了しました。")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import pyautogui as pag
 import time
+import pyautogui as pag
 import pyperclip
 
 def blex_connect():
@@ -12,7 +12,7 @@ def blex_connect():
     pag.press('enter')
     # 測定終了ボタン
     pag.press('tab',presses=11)
-    pag.press('enter',presses=3,interval=1.0)
+    pag.press('enter',presses=5,interval=1.0)
     # データ消去ボタン
     for i in range(5):
         pag.hotkey('shift','tab')
