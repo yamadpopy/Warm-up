@@ -37,12 +37,10 @@ class Main():
         pp(self.now_dic)
 
         # USBドングルを認識しているか
-        self.dongle_signal = dongle_check(self)
-        if self.dongle_signal:
-            # 順次ADC起動
-            adc_start_check(self)
-        else:
-            self.logger.error(f"ADC　USBドングル　認識なし")
+        dongle_check(self)
+
+        # 順次ADC起動
+        adc_start_check(self)
 
         self.stop_event = threading.Event()  # 終了イベント
         # 時刻チェック
